@@ -79,23 +79,38 @@ void MainScreen::render() {
 }
 
 void MainScreen::logic() {
+    bool save = false;
     ImGui::Begin("Control");
 
     ImGui::Checkbox("Edge detection", &edge_detect);
     ImGui::Checkbox("Fry", &fry);
     ImGui::Checkbox("Gaussian blur", &gaussian);
     ImGui::Checkbox("Box blur", &box_blur);
+    save = ImGui::Button("Save");
 
     ImGui::End();
     this->update_frame();
 
     if (edge_detect) {
         filter::edge_detect(frame);
-    }   
+    }
 
     if (fry) {
         filter::fry(frame);
-    }   
+    }
+
+    if (save) {
+        const std::chrono::time_point<std::chrono::system_clock> now =
+            std::chrono::system_clock::now();
+        std::string filename = std::format("Screenshot {0:%F} {0:%T}.webp", now);
+        uint8_t* buf;
+        size_t size = WebPEncodeRGB(
+            frame.data, frame.cols, frame.rows, frame.cols * 3, 100.0, &buf);
+        std::ofstream file(filename, std::ios::binary);
+        file.write(reinterpret_cast<const char*>(buf), size);
+        file.close();
+        WebPFree(buf);
+    }
 
     this->texture.update_texture(frame);
 }

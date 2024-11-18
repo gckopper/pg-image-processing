@@ -1,6 +1,10 @@
 #pragma once
 
+#include <chrono>
+#include <format>
+#include <fstream>
 #include <opencv2/opencv.hpp>
+#include <webp/encode.h>
 
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
@@ -8,9 +12,9 @@
 
 #include <glad/gl.h>
 
+#include <self/filter.hpp>
 #include <self/screen.hpp>
 #include <self/texture.hpp>
-#include <self/filter.hpp>
 
 namespace self {
 
