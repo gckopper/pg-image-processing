@@ -10,6 +10,3 @@
 [submodule "extern/imgui"]
 	path = extern/imgui
 	url = https://github.com/ocornut/imgui
-[submodule "extern/opencv"]
-	path = extern/opencv
-	url = https://github.com/opencv/opencv.git
