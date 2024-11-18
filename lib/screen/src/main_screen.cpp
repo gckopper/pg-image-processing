@@ -103,13 +103,7 @@ void MainScreen::logic() {
         const std::chrono::time_point<std::chrono::system_clock> now =
             std::chrono::system_clock::now();
         std::string filename = std::format("Screenshot {0:%F} {0:%T}.webp", now);
-        uint8_t* buf;
-        size_t size = WebPEncodeRGB(
-            frame.data, frame.cols, frame.rows, frame.cols * 3, 100.0, &buf);
-        std::ofstream file(filename, std::ios::binary);
-        file.write(reinterpret_cast<const char*>(buf), size);
-        file.close();
-        WebPFree(buf);
+        cv::imwrite(filename, frame);
     }
 
     this->texture.update_texture(frame);

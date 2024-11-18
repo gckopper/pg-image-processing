@@ -10,4 +10,4 @@ add_library(${PROJECT_NAME} STATIC "${SRC}")
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
 
-target_link_libraries(${PROJECT_NAME} texture glad filter webp)
+target_link_libraries(${PROJECT_NAME} texture glad filter)

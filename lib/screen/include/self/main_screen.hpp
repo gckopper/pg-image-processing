@@ -2,9 +2,7 @@
 
 #include <chrono>
 #include <format>
-#include <fstream>
 #include <opencv2/opencv.hpp>
-#include <webp/encode.h>
 
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>

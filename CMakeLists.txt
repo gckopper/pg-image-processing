@@ -32,7 +32,6 @@ include_directories("${CMAKE_BINARY_DIR}/generated_headers/")
 
 include(AddGlad)
 include(AddGLFW)
-include(AddLibWebP)
 
 find_package( OpenCV REQUIRED )
 include_directories( ${OpenCV_INCLUDE_DIRS} )
