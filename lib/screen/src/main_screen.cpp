@@ -101,7 +101,18 @@ void MainScreen::render_ui() {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void MainScreen::logic() {
+bool MainScreen::logic() {
+    while (!Input::queue.empty()) {
+        switch (Input::queue.front()) {
+        case QUIT:
+            return false;
+        case UNDO:
+            if (this->transformations.size() > 1) {
+                this->transformations.pop_back();
+            }
+        }
+        Input::queue.pop();
+    }
     this->update_frame();
 
     cv::Mat modded = frame.clone();
@@ -164,6 +175,7 @@ void MainScreen::logic() {
     }
 
     this->textures[0].update_texture(modded);
+    return true;
 }
 
 void MainScreen::update_ui() {
@@ -220,10 +232,6 @@ void MainScreen::update_ui() {
             "Scale", &this->ui.scale, 0.0f, 1.0f, "scale = %.3f");
         ImGui::SliderAngle(
             "Rotation", &this->ui.rotation, 0.0f, 360.0f, "rotation = %.3f");
-        if (this->transformations.size() > 1) {
-            this->transformations.back().scale = this->ui.scale;
-            this->transformations.back().rot = this->ui.rotation;
-        }
         ImGui::Button("Drag sticker");
         if (ImGui::IsItemActive() && !ImGui::IsItemHovered() && this->transformations.size() > 1) {
             transformations.back().x =

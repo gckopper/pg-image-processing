@@ -13,6 +13,7 @@
 #include <self/filter.hpp>
 #include <self/screen.hpp>
 #include <self/texture.hpp>
+#include <self/input.hpp>
 
 namespace self {
 
@@ -61,7 +62,7 @@ class MainScreen : Screen {
   public:
     void render() override;
     void render_ui() override;
-    void logic() override;
+    bool logic() override;
     void update_ui() override;
     bool init(int argc, char** argv) override;
     void quit() override;

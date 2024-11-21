@@ -9,4 +9,4 @@ add_library(${PROJECT_NAME} STATIC "src/window.cpp" "include/self/window.hpp")
 
 target_include_directories(${PROJECT_NAME} PUBLIC "include")
 
-target_link_libraries(${PROJECT_NAME} glad glfw log shader)
+target_link_libraries(${PROJECT_NAME} glad glfw log shader input)

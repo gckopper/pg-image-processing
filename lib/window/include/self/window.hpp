@@ -14,6 +14,7 @@
 
 #include <self/log.hpp>
 #include <self/shader.hpp>
+#include <self/input.hpp>
 
 namespace self {
 
@@ -31,6 +32,7 @@ class Window {
     void swap_buffers();
     void close();
     bool should_close();
+    void please_close();
 };
 
 } // namespace self

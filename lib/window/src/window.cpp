@@ -1,7 +1,7 @@
-#include <self/window.hpp>
-
 #include <mainFragShader.h>
 #include <mainVertShader.h>
+
+#include <self/window.hpp>
 
 GLFWwindow* setup_glfw(std::string_view title, int32_t height, int32_t width) {
     glfwInit();
@@ -16,27 +16,30 @@ GLFWwindow* setup_glfw(std::string_view title, int32_t height, int32_t width) {
 
     auto key_callback =
         [](GLFWwindow* w, int key, int scancode, int action, int mods) {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-                glfwSetWindowShouldClose(w, GL_TRUE);
+            if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+                LOG("QUIT!");
+                self::Input::queue.emplace(self::QUIT);
+            }
+            if (key == GLFW_KEY_Z && action == GLFW_PRESS && mods == GLFW_MOD_CONTROL) {
+                LOG("UNDO!");
+                self::Input::queue.emplace(self::UNDO);
+            }
         };
-    auto resize = [] (GLFWwindow* window, int width, int height) {
+    auto resize = [](GLFWwindow* window, int width, int height) {
         glViewport(0, 0, width, height);
     };
 
-    // Fazendo o registro da função de callback para a janela GLFW
     glfwSetKeyCallback(window, key_callback);
 
     glfwSetFramebufferSizeCallback(window, resize);
 
-    // GLAD: carrega todos os ponteiros d funções da OpenGL
     if (gladLoadGL(glfwGetProcAddress) == 0) {
         LOG("Failed to initialize OpenGL context");
         exit(-1);
     }
-    const GLubyte* renderer =
-        glGetString(GL_RENDERER);                     /* get renderer string */
+    const GLubyte* renderer = glGetString(GL_RENDERER);
     glCheckError();
-    const GLubyte* version = glGetString(GL_VERSION); /* version as a string */
+    const GLubyte* version = glGetString(GL_VERSION);
     glCheckError();
     LOG("Renderer: " << renderer);
     LOG("OpenGL version supported " << version);
@@ -44,7 +47,7 @@ GLFWwindow* setup_glfw(std::string_view title, int32_t height, int32_t width) {
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     glCheckError();
-    
+
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glCheckError();
     glEnable(GL_BLEND);
@@ -92,7 +95,7 @@ void Window::setup(const std::string_view title,
 
     tex_uni = glGetUniformLocation(shaderID, "texture_uniform");
     glCheckError();
-    int samplers[] = {0, 1, 2, 3, 4, 5}; 
+    int samplers[] = {0, 1, 2, 3, 4, 5};
     glUniform1iv(tex_uni, 6, samplers);
     glCheckError();
 }
@@ -116,10 +119,10 @@ void Window::close() {
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-	glfwTerminate();
+    glfwTerminate();
 }
 
-bool Window::should_close() {
-    return glfwWindowShouldClose(this->window);
-}
+bool Window::should_close() { return glfwWindowShouldClose(this->window); }
+
+void Window::please_close() { glfwSetWindowShouldClose(this->window, true); }
 } // namespace self

@@ -1,3 +1,5 @@
+add_subdirectory("input")
+
 add_subdirectory("log")
 
 add_subdirectory("filter")

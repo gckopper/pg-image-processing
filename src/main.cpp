@@ -37,7 +37,9 @@ int main(int argc, char** argv) {
         
         main_screen.update_ui();
 
-        main_screen.logic();
+        if (!main_screen.logic()) {
+            window.please_close();
+        }
 
         main_screen.render_ui();
 
