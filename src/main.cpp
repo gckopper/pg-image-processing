@@ -1,7 +1,5 @@
 // GLAD
 #include <cstdlib>
-#include <mainFragShader.h>
-#include <mainVertShader.h>
 #include <opencv2/opencv.hpp>
 
 #include <glad/gl.h>
@@ -24,43 +22,24 @@ int main(int argc, char** argv) {
     self::Window window;
     window.setup("this nuts", 600, 800);
 
-    GLint tex_uni;
-
-    {
-        // Compilando e buildando o programa de shader
-        self::Shader shader;
-        std::optional<GLuint> maybe_shader =
-            shader.compile(VERT_SHADER, FRAG_SHADER);
-        if (!maybe_shader.has_value()) {
-            LOG("SHADER FAILURE");
-            return 2;
-        }
-        GLuint shaderID = maybe_shader.value();
-
-        glUseProgram(shaderID);
-        glCheckError();
-
-        tex_uni = glGetUniformLocation(shaderID, "texture_uniform");
-        glCheckError();
-        glUniform1i(tex_uni, 0);
-        glCheckError();
-    }
-
     self::MainScreen main_screen;
 
-    if (!main_screen.init()) {
+    if (!main_screen.init(argc, argv)) {
         LOG("Failed to init the main screen");
         return 3;
     }
 
-    // Loop da aplicação - "game loop"
     while (!window.should_close()) {
         window.get_input();
         window.request_frame();
 
-        main_screen.logic();
-        
         main_screen.render();
+        
+        main_screen.update_ui();
+
+        main_screen.logic();
+
+        main_screen.render_ui();
 
         window.swap_buffers();
     }

@@ -13,6 +13,7 @@
 #include <GLFW/glfw3.h>
 
 #include <self/log.hpp>
+#include <self/shader.hpp>
 
 namespace self {
 

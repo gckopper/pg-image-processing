@@ -1,5 +1,8 @@
 #include <self/window.hpp>
 
+#include <mainFragShader.h>
+#include <mainVertShader.h>
+
 GLFWwindow* setup_glfw(std::string_view title, int32_t height, int32_t width) {
     glfwInit();
 
@@ -41,6 +44,12 @@ GLFWwindow* setup_glfw(std::string_view title, int32_t height, int32_t width) {
     glfwGetFramebufferSize(window, &width, &height);
     glViewport(0, 0, width, height);
     glCheckError();
+    
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glCheckError();
+    glEnable(GL_BLEND);
+    glCheckError();
+
     return window;
 }
 
@@ -67,6 +76,25 @@ void Window::setup(const std::string_view title,
                    const int32_t width) {
     this->window = setup_glfw(title, height, width);
     setup_imgui(this->window);
+
+    GLint tex_uni;
+    self::Shader shader;
+    std::optional<GLuint> maybe_shader =
+        shader.compile(VERT_SHADER, FRAG_SHADER);
+    if (!maybe_shader.has_value()) {
+        LOG("SHADER FAILURE");
+        exit(2);
+    }
+    GLuint shaderID = maybe_shader.value();
+
+    glUseProgram(shaderID);
+    glCheckError();
+
+    tex_uni = glGetUniformLocation(shaderID, "texture_uniform");
+    glCheckError();
+    int samplers[] = {0, 1, 2, 3, 4, 5}; 
+    glUniform1iv(tex_uni, 6, samplers);
+    glCheckError();
 }
 
 void Window::change_title(std::string_view title) {

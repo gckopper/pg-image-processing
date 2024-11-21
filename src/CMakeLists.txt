@@ -1,6 +1,3 @@
-add_shader("VERT_SHADER" "shaderSource.h.in" "main.vert" "mainVertShader.h")
-add_shader("FRAG_SHADER" "shaderSource.h.in" "main.frag" "mainFragShader.h")
-
 add_executable(main 
     main.cpp
     "${PROJECT_SOURCE_DIR}/extern/imgui/backends/imgui_impl_opengl3.cpp"
@@ -16,4 +13,4 @@ add_executable(main
     #"${PROJECT_SOURCE_DIR}/extern/imgui/imstb_rectpack.h"
     #"${PROJECT_SOURCE_DIR}/extern/imgui/imstb_textedit.h"
 )
-target_link_libraries(main PUBLIC glad glfw window shader texture screen ${OpenCV_LIBS})
+target_link_libraries(main PUBLIC window screen ${OpenCV_LIBS})
