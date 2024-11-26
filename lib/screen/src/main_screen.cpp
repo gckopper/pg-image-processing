@@ -46,7 +46,7 @@ void MainScreen::setup_buffers() {
                  GL_DYNAMIC_DRAW);
     glCheckError();
 
-    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Transformation), (GLvoid*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Transformation), (GLvoid*)0);
     glCheckError();
 
     glEnableVertexAttribArray(1);
@@ -54,12 +54,20 @@ void MainScreen::setup_buffers() {
     glVertexAttribDivisor(1, 1);
     glCheckError();
 
-    glVertexAttribIPointer(2, 1, GL_INT, sizeof(Transformation), (GLvoid*)offsetof(Transformation, sticker));
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Transformation), (GLvoid*)offsetof(Transformation, scalex));
     glCheckError();
 
     glEnableVertexAttribArray(2);
     glCheckError();
     glVertexAttribDivisor(2, 1);
+    glCheckError();
+
+    glVertexAttribIPointer(3, 1, GL_INT, sizeof(Transformation), (GLvoid*)offsetof(Transformation, sticker));
+    glCheckError();
+
+    glEnableVertexAttribArray(3);
+    glCheckError();
+    glVertexAttribDivisor(3, 1);
     glCheckError();
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -137,6 +145,10 @@ bool MainScreen::logic() {
         filter::gaussian(modded, this->ui.gaussian_ksize);
     }
 
+    if (this->ui.dog) {
+        filter::dog(modded, this->ui.dog_ksize, this->ui.dog_std);
+    }
+
     if (this->ui.box_blur) {
         filter::box_filter(modded, this->ui.box_blur_ksize);
     }
@@ -154,7 +166,7 @@ bool MainScreen::logic() {
     }
 
     if (this->ui.sharpen) {
-        filter::sharpen(modded);
+        filter::sharpen(modded, this->ui.sharpen_strengh);
     }
 
     if (this->ui.save) {
@@ -204,6 +216,18 @@ void MainScreen::update_ui() {
                          65,
                          "ksize = %d");
         this->ui.gaussian_ksize += 1 - this->ui.gaussian_ksize % 2;
+        ImGui::Checkbox("Difference of gaussians", &this->ui.dog);
+        ImGui::SliderInt("Gaussian ksize",
+                         &this->ui.dog_ksize,
+                         1,
+                         65,
+                         "ksize = %d");
+        this->ui.dog_ksize += 1 - this->ui.dog_ksize % 2;
+        ImGui::SliderInt("Standard deviation",
+                         &this->ui.dog_std,
+                         1,
+                         65,
+                         "std = %d");
         ImGui::Checkbox("Box blur", &this->ui.box_blur);
         ImGui::SliderInt(
             "Box blur ksize", &this->ui.box_blur_ksize, 1, 65, "ksize = %d");
@@ -216,13 +240,20 @@ void MainScreen::update_ui() {
                          "ksize = %d");
         this->ui.median_blur_ksize += 1 - this->ui.median_blur_ksize % 2;
         ImGui::Checkbox("Sharpen", &this->ui.sharpen);
+        ImGui::SliderInt("Sharpness",
+                         &this->ui.sharpen_strengh,
+                         1,
+                         65,
+                         "%d");
         ImGui::TreePop();
     }
 
     if (ImGui::TreeNode("Stickers")) {
-        for (int i = 0; i < sticker_names.size(); ++i) {
-            if (ImGui::Button(sticker_names[i].data())) {
-                Transformation t(0.0f, 0.0f, this->ui.scale, this->ui.rotation, i+1);
+        const float scalex = (this->height / static_cast<float>(this->width)) * this->ui.scale;
+        const float scaley = this->ui.scale;
+        for (int i = 0; i < STICKER_NAMES.size(); ++i) {
+            if (ImGui::Button(STICKER_NAMES[i].data())) {
+                Transformation t(0.0f, 0.0f, this->ui.rotation, scalex, scaley, i+1);
                 if (transformations.size() < MAX_STICKERS) {
                     transformations.push_back(t);
                 }
@@ -293,7 +324,7 @@ bool MainScreen::init(int argc, char** argv) {
 
     {
         int i = 1;
-        for (const std::string_view& s : sticker_paths) {
+        for (const std::string_view& s : STICKER_PATHS) {
             cv::Mat image;
             load_image(s.data(), image);
             this->textures[i].setup_texture(image, i);
@@ -303,7 +334,7 @@ bool MainScreen::init(int argc, char** argv) {
 
     this->textures[0].setup_texture(this->frame, 0);
 
-    this->transformations.emplace_back(0.0f, 0.0f, 1.0f, 0.0f, 0);
+    this->transformations.emplace_back(0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0);
 
     this->setup_buffers();
     return true;

@@ -1,3 +1,4 @@
+#include "opencv2/core.hpp"
 #include <self/filter.hpp>
 
 namespace self {
@@ -10,6 +11,14 @@ void box_filter(cv::Mat &image, int ksize) {
 
 void gaussian(cv::Mat &image, int ksize) {
     cv::GaussianBlur(image, image, cv::Size_(ksize,ksize), ksize, ksize);
+}
+
+void dog(cv::Mat &image, int ksize, int std) {
+    cv::Mat beeg;
+    cv::Mat smol;
+    cv::GaussianBlur(image, beeg, cv::Size_(ksize,ksize), std, std);
+    cv::GaussianBlur(image, smol, cv::Size_(2*ksize+1,2*ksize+1), 5*std, 5*std);
+    cv::subtract(beeg, smol, image);
 }
 
 void edge_detect(cv::Mat &image) {
@@ -34,14 +43,14 @@ void canny(cv::Mat &image) {
     cannyed.copyTo(image);
 }
 
-void sharpen(cv::Mat &image) {
+void sharpen(cv::Mat &image, int strengh) {
     cv::Mat kernel(3, 3, CV_8S, cv::Scalar(-2));
     kernel.row(0).col(0) = 1;
     kernel.row(0).col(2) = 1;
     kernel.row(1).col(1) = 5;
     kernel.row(2).col(0) = 1;
     kernel.row(2).col(2) = 1;
-    cv::filter2D(image, image, -1, kernel);
+    cv::filter2D(image, image, -1, kernel*strengh);
 }
 
 void median_blur(cv::Mat &image, int ksize) {

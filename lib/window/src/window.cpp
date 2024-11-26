@@ -17,11 +17,9 @@ GLFWwindow* setup_glfw(std::string_view title, int32_t height, int32_t width) {
     auto key_callback =
         [](GLFWwindow* w, int key, int scancode, int action, int mods) {
             if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-                LOG("QUIT!");
                 self::Input::queue.emplace(self::QUIT);
             }
             if (key == GLFW_KEY_Z && action == GLFW_PRESS && mods == GLFW_MOD_CONTROL) {
-                LOG("UNDO!");
                 self::Input::queue.emplace(self::UNDO);
             }
         };

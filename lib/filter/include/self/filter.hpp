@@ -11,20 +11,22 @@ void box_filter(cv::Mat& image, int ksize);
 // 2
 void gaussian(cv::Mat& image, int ksize);
 // 3
-void edge_detect(cv::Mat& image);
+void dog(cv::Mat &image, int ksize, int std);
 // 4
-void fry(cv::Mat& image);
+void edge_detect(cv::Mat& image);
 // 5
-void bitwise_not(cv::Mat &image);
+void fry(cv::Mat& image);
 // 6
-void canny(cv::Mat &image);
+void bitwise_not(cv::Mat &image);
 // 7
-void sharpen(cv::Mat &image);
+void canny(cv::Mat &image);
 // 8
-void median_blur(cv::Mat &image, int ksize);
+void sharpen(cv::Mat &image, int strengh);
 // 9
-void grayscale(cv::Mat &image);
+void median_blur(cv::Mat &image, int ksize);
 // 10
+void grayscale(cv::Mat &image);
+// 11
 void wow(cv::Mat &image);
 
 } // namespace filter
