@@ -20,7 +20,7 @@
 
 int main(int argc, char** argv) {
     self::Window window;
-    window.setup("this nuts", 600, 800);
+    window.setup("Super Image Manipulation Program (SIMP)", 600, 800);
 
     self::MainScreen main_screen;
 

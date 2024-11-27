@@ -1,4 +1,3 @@
-#include "opencv2/core.hpp"
 #include <self/filter.hpp>
 
 namespace self {

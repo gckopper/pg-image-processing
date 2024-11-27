@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake )
 
 option(CROSS_COMPILE "Cross compile to Windows" OFF)
 if(CROSS_COMPILE)
